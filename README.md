@@ -33,7 +33,7 @@ Todo el procesamiento ocurre de forma **local y privada**, sin telemetría ni en
 ## Instalación desde el repositorio
 
 > [!NOTE]
-> Esta vía de instalación requiere tener **Python 3.11 o superior** instalado en tu sistema. Es la opción recomendada si el ejecutable descargable genera advertencias de seguridad en tu sistema operativo.
+> Esta vía de instalación requiere tener **Python 3.11 o superior** instalado en tu sistema. Al no estar firmado bajo licencia es posible que tu sistema lance un error
 
 ### 1. Clona o descarga el repositorio
 
