@@ -82,7 +82,6 @@ class OptimizadorApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        # NOMBRE MODIFICADO AQUÍ
         self.title("PiloPress")
         self.geometry("820x900")
         self.minsize(780, 820)
