@@ -37,7 +37,7 @@
         <nav class="flex items-center gap-6 text-sm text-brand-textMuted">
             <a href="#caracteristicas" class="hover:text-white transition-colors">Características</a>
             <a href="#como-funciona" class="hover:text-white transition-colors">Cómo Funciona</a>
-            <a href="https://github.com" target="_blank" class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-white px-3 py-1.5 rounded-lg transition-all border border-neutral-700">
+            <a href="https://github.com/alejandroasc96/PiloPress" target="_blank" class="flex items-center gap-1 bg-neutral-800 hover:bg-neutral-700 text-white px-3 py-1.5 rounded-lg transition-all border border-neutral-700">
                 <span>GitHub</span>
             </a>
         </nav>
@@ -72,11 +72,11 @@
                         <span id="btn-exe-text">Descargar para tu Sistema</span>
                     </a>
                     <div class="flex justify-center gap-4 text-xs text-neutral-600 pt-1">
-                        <a id="link-win" href="#" class="hover:text-neutral-400 transition-colors">Windows (.exe)</a>
+                        <a id="link-win" href="https://github.com/alejandroasc96/PiloPress/releases/download/latest/PiloPress-Windows.exe" class="hover:text-neutral-400 transition-colors">Windows (.exe)</a>
                         <span class="text-neutral-800">•</span>
-                        <a id="link-mac" href="#" class="hover:text-neutral-400 transition-colors">macOS (.zip)</a>
+                        <a id="link-mac" href="https://github.com/alejandroasc96/PiloPress/releases/download/latest/PiloPress-macOS.zip" class="hover:text-neutral-400 transition-colors">macOS (.zip)</a>
                         <span class="text-neutral-800">•</span>
-                        <a id="link-linux" href="#" class="hover:text-neutral-400 transition-colors">Linux</a>
+                        <a id="link-linux" href="https://github.com/alejandroasc96/PiloPress/releases/download/latest/PiloPress-Linux" class="hover:text-neutral-400 transition-colors">Linux</a>
                     </div>
                 </div>
                 <p id="os-subtext" class="text-center text-xs text-neutral-600 font-mono mt-3">Detectando sistema operativo...</p>
@@ -323,35 +323,79 @@
             const linkMac    = document.getElementById("link-mac");
             const linkLinux  = document.getElementById("link-linux");
 
+            // Rellenar enlaces directos (por seguridad, ya vienen hardcodeados en HTML)
+            if (linkWin)   { linkWin.href   = baseReleaseUrl + "PiloPress-Windows.exe"; }
+            if (linkMac)   { linkMac.href   = baseReleaseUrl + "PiloPress-macOS.zip"; }
+            if (linkLinux) { linkLinux.href = baseReleaseUrl + "PiloPress-Linux"; }
+
+            function selectOS(os, isManual = false) {
+                let osName = "";
+                let btnText = "";
+                let dlUrl = "";
+                
+                // Limpiar clases activas de todos los enlaces pequeños
+                [linkWin, linkMac, linkLinux].forEach(link => {
+                    if (link) {
+                        link.classList.remove("text-blue-400", "font-semibold");
+                    }
+                });
+
+                if (os === "win") {
+                    osName = "Windows";
+                    btnText = "Descargar para Windows (.exe)";
+                    dlUrl = linkWin ? linkWin.href : baseReleaseUrl + "PiloPress-Windows.exe";
+                    if (linkWin) {
+                        linkWin.classList.add("text-blue-400", "font-semibold");
+                    }
+                } else if (os === "mac") {
+                    osName = "macOS";
+                    btnText = "Descargar para macOS (.zip)";
+                    dlUrl = linkMac ? linkMac.href : baseReleaseUrl + "PiloPress-macOS.zip";
+                    if (linkMac) {
+                        linkMac.classList.add("text-blue-400", "font-semibold");
+                    }
+                } else if (os === "linux") {
+                    osName = "Linux";
+                    btnText = "Descargar para Linux";
+                    dlUrl = linkLinux ? linkLinux.href : baseReleaseUrl + "PiloPress-Linux";
+                    if (linkLinux) {
+                        linkLinux.classList.add("text-blue-400", "font-semibold");
+                    }
+                } else {
+                    osName = "tu sistema";
+                    btnText = "Descargar para tu Sistema";
+                    dlUrl = "https://github.com/alejandroasc96/PiloPress/archive/refs/heads/main.zip";
+                }
+
+                if (btnExe)     { btnExe.href = dlUrl; }
+                if (btnExeText) { btnExeText.textContent = btnText; }
+                if (subtext) {
+                    subtext.textContent = isManual 
+                        ? `Compilación binaria seleccionada para ${osName}.`
+                        : `Compilación binaria detectada para ${osName}.`;
+                }
+            }
+
+            // Detección automática de SO al cargar la página
             const ua       = navigator.userAgent.toLowerCase();
             const platform = (navigator.userAgentData?.platform || navigator.platform || "").toLowerCase();
 
-            // Rellenar siempre los enlaces directos
-            linkWin.href   = baseReleaseUrl + "PiloPress-Windows.exe";
-            linkMac.href   = baseReleaseUrl + "PiloPress-macOS.zip";
-            linkLinux.href = baseReleaseUrl + "PiloPress-Linux";
-
-            let osName  = "tu sistema";
-            let btnText = "Descargar para tu Sistema";
-            let dlUrl   = "https://github.com/alejandroasc96/PiloPress/archive/refs/heads/main.zip";
-
-            if (platform.includes("win") || ua.includes("win")) {
-                osName  = "Windows";
-                btnText = "Descargar para Windows (.exe)";
-                dlUrl   = linkWin.href;
-            } else if (platform.includes("mac") || ua.includes("mac")) {
-                osName  = "macOS";
-                btnText = "Descargar para macOS (.zip)";
-                dlUrl   = linkMac.href;
+            let detectedOS = "win"; // Valor predeterminado
+            if (platform.includes("mac") || ua.includes("mac")) {
+                detectedOS = "mac";
             } else if (platform.includes("linux") || ua.includes("linux")) {
-                osName  = "Linux";
-                btnText = "Descargar para Linux";
-                dlUrl   = linkLinux.href;
+                detectedOS = "linux";
+            } else if (platform.includes("win") || ua.includes("win")) {
+                detectedOS = "win";
+            } else {
+                detectedOS = "unknown";
             }
+            selectOS(detectedOS, false);
 
-            if (btnExe)     { btnExe.href = dlUrl; }
-            if (btnExeText) { btnExeText.textContent = btnText; }
-            if (subtext)    { subtext.textContent = `Compilación binaria detectada para ${osName}.`; }
+            // Escuchar clics en los enlaces pequeños para actualizar la UI (la descarga la hace nativamente el navegador)
+            if (linkWin)   { linkWin.addEventListener("click", function() { selectOS("win", true); }); }
+            if (linkMac)   { linkMac.addEventListener("click", function() { selectOS("mac", true); }); }
+            if (linkLinux) { linkLinux.addEventListener("click", function() { selectOS("linux", true); }); }
         });
 
         // --- Acordeón de instrucciones manuales ---
